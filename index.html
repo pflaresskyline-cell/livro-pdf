@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Estúdio de Livros — Montador Profissional</title>
+<style>
+:root{--bg:#f3f5f8;--panel:#fff;--ink:#182230;--muted:#667085;--line:#d9e0e8;--brand:#2356d8;--brand2:#173fa8;--soft:#eaf0ff;--danger:#b42318;--shadow:0 8px 26px rgba(16,24,40,.07)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:#111c32;color:#fff;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:42px;height:42px;border-radius:12px;background:#315fe0;display:grid;place-items:center;font-size:22px}.brand h1{font-size:18px;margin:0}.brand p{margin:2px 0 0;color:#bdc8dc;font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+button,.button{border:0;border-radius:9px;padding:10px 14px;font-weight:650;cursor:pointer;font-size:13px;background:#eef2f7;color:#233047}
+button.primary{background:var(--brand);color:white}button.primary:hover{background:var(--brand2)}button.dark{background:#26344e;color:#fff}button.outline{background:#fff;border:1px solid var(--line)}button.danger{color:var(--danger);background:#fff0ef}button:disabled{opacity:.45;cursor:not-allowed}
+.app{display:grid;grid-template-columns:330px minmax(0,1fr);gap:18px;padding:18px;max-width:1700px;margin:auto}
+.sidebar{display:flex;flex-direction:column;gap:14px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.panel h2{font-size:14px;margin:0 0 13px}.panel h3{font-size:12px;color:#344054;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.05em}
+.field{margin:10px 0}.field label{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:650;color:#344054;margin-bottom:5px}.field small{color:var(--muted);font-weight:400}
+input[type=text],input[type=number],select{width:100%;padding:9px 10px;border:1px solid #cfd7e2;border-radius:8px;background:#fff;color:var(--ink);font:inherit}
+input[type=range]{width:100%;accent-color:var(--brand)}input[type=checkbox]{accent-color:var(--brand)}
+.check{display:flex;align-items:center;gap:8px;margin:8px 0;color:#344054;font-size:12px}
+.upload{display:block;border:1.5px dashed #9aadd0;background:#f8faff;border-radius:10px;padding:14px;text-align:center;color:#344c82;cursor:pointer}.upload strong{display:block;font-size:13px}.upload span{font-size:11px;color:var(--muted)}.upload input{display:none}
+.hint{font-size:11px;color:var(--muted);margin-top:8px}
+.main{min-width:0}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.toolbar h2{font-size:16px;margin:0}.stats{font-size:12px;color:var(--muted)}
+.workspace{background:#e6eaf0;border:1px solid #d2d9e3;border-radius:14px;padding:18px;min-height:520px}
+.sheet-list{display:flex;flex-direction:column;gap:22px;align-items:center}
+.sheet-wrap{width:min(100%,980px)}.sheet-label{display:flex;justify-content:space-between;color:#566174;font-size:11px;margin:0 2px 6px}
+.sheet{position:relative;width:100%;aspect-ratio:297/210;background:white;box-shadow:0 5px 22px rgba(16,24,40,.16);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);column-gap:var(--gutter,0mm);overflow:hidden}
+.sheet.single{grid-template-columns:1fr}
+.cell{position:relative;min-width:0;min-height:0;display:flex;align-items:center;justify-content:center;padding:var(--margin,8mm);background:#fff}
+.cell+.cell{border-left:0}
+.cell-inner{position:relative;width:100%;height:100%;border:var(--border-width,0.3mm) solid var(--border-color,#111);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cell img{width:100%;height:100%;object-fit:contain;display:block}
+.cell img.cover{object-fit:cover}
+.empty{color:#98a2b3;text-align:center;padding:15px;font-size:12px}.empty b{display:block;color:#667085;font-size:14px;margin-bottom:5px}
+.cell-title{position:absolute;left:8px;bottom:7px;background:rgba(255,255,255,.88);padding:2px 6px;border-radius:4px;font-size:9px;color:#667085}
+.page-number{position:absolute;right:9px;bottom:9px;display:flex;align-items:center;justify-content:center;min-width:27px;height:27px;padding:0 7px;font-weight:800;font-size:12px;line-height:1;border:1px solid rgba(0,0,0,.12);z-index:3;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.page-number.circle{width:30px;height:30px;min-width:30px;border-radius:50%;padding:0}
+.page-number.rounded{border-radius:7px}
+.page-number.square{border-radius:0}
+.page-number.plain{background:transparent!important;border-color:transparent;box-shadow:none;padding:0;min-width:18px}
+.crop{position:absolute;width:9px;height:9px;z-index:4;pointer-events:none}
+.crop:before,.crop:after{content:"";position:absolute;background:#111}
+.crop:before{width:9px;height:.5px;top:4px;left:0}.crop:after{height:9px;width:.5px;left:4px;top:0}
+.crop.tl{top:0;left:0}.crop.tr{top:0;right:0}.crop.bl{bottom:0;left:0}.crop.br{bottom:0;right:0}
+.fold{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-.5px);border-left:1px dashed #777;z-index:5;pointer-events:none}
+.page-list{display:flex;flex-direction:column;gap:7px;max-height:330px;overflow:auto;margin-top:10px}
+.page-item{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:9px;padding:7px;border:1px solid var(--line);border-radius:9px;background:#fff}
+.thumb{width:44px;height:48px;border-radius:5px;background:#f0f2f5;overflow:hidden;display:grid;place-items:center;color:#98a2b3;font-size:10px}.thumb img{width:100%;height:100%;object-fit:cover}
+.page-meta{min-width:0}.page-meta b{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.page-meta small{color:var(--muted);font-size:10px}
+.page-buttons{display:flex;gap:3px}.page-buttons button{padding:5px 7px;font-size:11px}
+.empty-state{text-align:center;padding:90px 20px;color:#667085}.empty-state .big{font-size:42px;margin-bottom:10px}
+.note{background:#fff8e6;border:1px solid #f2d28c;border-radius:9px;padding:10px;font-size:11px;color:#7a5410;margin-top:10px}
+.footer{max-width:1700px;margin:0 auto;padding:0 18px 20px;color:#7a8494;font-size:11px}
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{order:2}.main{order:1}.workspace{padding:10px}.sheet-wrap{width:100%}}
+@media print{
+ @page{size:A4 landscape;margin:0}
+ *,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ body{background:#fff!important}.no-print,header,.sidebar,.toolbar,.footer{display:none!important}.app{display:block;padding:0;margin:0;max-width:none}.main{display:block}.workspace{padding:0;border:0;border-radius:0;background:#fff;min-height:0}.sheet-list{display:block}.sheet-wrap{width:297mm;height:210mm;margin:0;page-break-after:always;break-after:page}.sheet-wrap:last-child{page-break-after:auto;break-after:auto}.sheet{width:297mm;height:210mm;aspect-ratio:auto;box-shadow:none;background:#fff;print-color-adjust:exact;-webkit-print-color-adjust:exact}.cell{padding:var(--print-margin,8mm);print-color-adjust:exact;-webkit-print-color-adjust:exact}.cell-inner{print-color-adjust:exact;-webkit-print-color-adjust:exact}.page-number{print-color-adjust:exact;-webkit-print-color-adjust:exact}.cell+.cell{border-left:0}.fold{display:none}.sheet.single{grid-template-columns:1fr}.sheet.single .cell{width:100%}.crop{display:block}
+}
+</style>
+</head>
+<body>
+<header class="no-print">
+ <div class="brand"><div class="logo">📚</div><div><h1>Estúdio de Livros</h1><p>Montador profissional de livros ilustrados e para colorir</p></div></div>
+ <div class="actions"><button class="dark" id="saveProject">Salvar projeto</button><button class="dark" id="loadProject">Abrir projeto</button><button class="primary" id="printBtn">Imprimir / Salvar PDF</button></div>
+</header>
+<div class="app">
+ <aside class="sidebar no-print">
+  <section class="panel">
+   <h2>1. Conteúdo do livro</h2>
+   <div class="field"><label>Título do livro</label><input id="bookTitle" type="text" value="Meu Livro de Colorir"></div>
+   <label class="upload"><strong>＋ Adicionar imagens</strong><span>Selecione várias imagens (JPG, PNG, WEBP)</span><input id="imageUpload" type="file" accept="image/*" multiple></label>
+   <div class="hint">Cada imagem vira uma página do livro. Use os controles da lista para ordenar ou excluir.</div>
+   <div class="page-list" id="pageList"><div class="hint">Nenhuma imagem adicionada ainda.</div></div>
+   <div class="actions" style="margin-top:10px"><button class="outline" id="addBlank">＋ Página vazia</button><button class="outline" id="clearAll">Limpar tudo</button></div>
+  </section>
+  <section class="panel">
+   <h2>2. Formato e impressão</h2>
+   <div class="field"><label>Tamanho do papel</label><select id="paper"><option value="a4">A4 — 297 × 210 mm</option><option value="letter">Carta — 279 × 216 mm</option><option value="a3">A3 — 420 × 297 mm</option></select></div>
+   <div class="field"><label>Orientação</label><select id="orientation"><option value="landscape">Deitada (paisagem)</option><option value="portrait">Em pé (retrato)</option></select></div>
+   <div class="field"><label>Distribuição por folha</label><select id="perSheet"><option value="2">2 páginas por folha (lado a lado)</option><option value="1">1 página por folha (página inteira)</option></select></div>
+   <div class="field"><label>Espaço entre as páginas <small id="gutterVal">6 mm</small></label><input id="gutter" type="range" min="0" max="30" value="6"></div>
+   <div class="field"><label>Margem interna <small id="marginVal">8 mm</small></label><input id="margin" type="range" min="0" max="25" value="8"></div>
+   <div class="field"><label>Encaixe das páginas internas</label><select id="fit"><option value="contain">Ajustar imagem inteira (sem cortar)</option><option value="cover">Preencher página (pode cortar)</option></select></div>
+   <div class="check"><input type="checkbox" id="cropMarks" checked><label for="cropMarks">Marcas de corte nos cantos</label></div>
+   <div class="check"><input type="checkbox" id="foldMark" checked><label for="foldMark">Linha guia central para dobra</label></div>
+   <div class="check"><input type="checkbox" id="pageLabels"><label for="pageLabels">Mostrar número nas páginas internas</label></div>
+   <div class="field"><label>Formato do número</label><select id="numberShape"><option value="circle">Circular</option><option value="rounded">Retângulo arredondado</option><option value="square">Quadrado</option><option value="plain">Somente número</option></select></div>
+   <div class="field"><label>Fundo do número</label><input id="numberBg" type="color" value="#2356d8" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:white;padding:3px"></div>
+   <div class="field"><label>Cor da letra</label><input id="numberColor" type="color" value="#ffffff" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:white;padding:3px"></div>
+   <div class="field"><label>Tamanho do número <small id="numberSizeVal">12 px</small></label><input id="numberSize" type="range" min="8" max="24" value="12"></div>
+   <div class="note">Para as cores aparecerem no PDF: na janela de impressão, abra “Mais definições” e marque “Gráficos de segundo plano” ou “Imprimir planos de fundo”. Também escolha escala 100% para preservar as medidas.</div>
+  </section>
+  <section class="panel">
+   <h2>3. Bordas e acabamento</h2>
+   <div class="check"><input type="checkbox" id="showBorder" checked><label for="showBorder">Ativar borda ao redor de cada página</label></div>
+   <div class="field"><label>Espessura da borda <small id="borderVal">0,3 mm</small></label><input id="borderWidth" type="range" min="0" max="3" step=".1" value=".3"></div>
+   <div class="field"><label>Cor da borda</label><input id="borderColor" type="color" value="#222222" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:white;padding:3px"></div>
+   <div class="field"><label>Cor do fundo</label><input id="backgroundColor" type="color" value="#ffffff" style="width:100%;height:36px;border:1px solid var(--line);border-radius:8px;background:white;padding:3px"></div>
+  </section>
+  <section class="panel">
+   <h2>4. Capa e contracapa</h2>
+   <div class="check"><input type="checkbox" id="includeCover" checked><label for="includeCover">Incluir capa no início</label></div>
+   <label class="upload"><strong>＋ Enviar imagem da capa</strong><span>Imagem da frente do livro</span><input id="coverUpload" type="file" accept="image/*"></label>
+   <div class="check"><input type="checkbox" id="includeBack" checked><label for="includeBack">Incluir contracapa no final</label></div>
+   <label class="upload"><strong>＋ Enviar imagem da contracapa</strong><span>Imagem do verso do livro</span><input id="backUpload" type="file" accept="image/*"></label>
+   <div class="field"><label>Encaixe da capa e contracapa</label><select id="coverFit"><option value="contain">Mostrar imagem inteira (sem cortar)</option><option value="cover">Preencher cada metade (pode cortar)</option></select></div>
+   <div class="hint">Capa e contracapa formam uma folha própria, lado a lado, e têm ajuste de imagem independente das páginas internas.</div>
+  </section>
+ </aside>
+ <main class="main">
+  <div class="toolbar no-print"><div><h2>Pré-visualização de impressão</h2><div class="stats" id="stats">Adicione imagens para começar.</div></div><div class="actions"><button class="outline" id="refresh">Atualizar prévia</button></div></div>
+  <div class="workspace"><div class="sheet-list" id="preview"><div class="empty-state"><div class="big">🖼️</div><b>Seu livro aparecerá aqui</b><br>Adicione imagens no painel lateral para montar as páginas.</div></div></div>
+ </main>
+</div>
+<div class="footer no-print">Estúdio de Livros • As imagens permanecem no seu dispositivo. O sistema monta a prévia localmente e usa a impressão do navegador para gerar PDF.</div>
+<script>
+(() => {
+ const $=id=>document.getElementById(id);
+ let pages=[], cover=null, back=null, nextId=1;
+ const settingsIds=['bookTitle','paper','orientation','perSheet','gutter','margin','fit','coverFit','cropMarks','foldMark','pageLabels','numberShape','numberBg','numberColor','numberSize','showBorder','borderWidth','borderColor','backgroundColor','includeCover','includeBack'];
+ const readFile=file=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+ $('imageUpload').addEventListener('change',async e=>{for(const f of e.target.files){if(!f.type.startsWith('image/'))continue;pages.push({id:nextId++,name:f.name,src:await readFile(f)});}e.target.value='';render();});
+ $('coverUpload').addEventListener('change',async e=>{if(e.target.files[0])cover={name:e.target.files[0].name,src:await readFile(e.target.files[0])};e.target.value='';render();});
+ $('backUpload').addEventListener('change',async e=>{if(e.target.files[0])back={name:e.target.files[0].name,src:await readFile(e.target.files[0])};e.target.value='';render();});
+ $('addBlank').onclick=()=>{pages.push({id:nextId++,name:'Página vazia',src:null});render();};
+ $('clearAll').onclick=()=>{if(confirm('Remover todas as páginas, capa e contracapa?')){pages=[];cover=back=null;render();}};
+ function move(i,delta){const j=i+delta;if(j<0||j>=pages.length)return;[pages[i],pages[j]]=[pages[j],pages[i]];render();}
+ function renderList(){
+  const el=$('pageList');el.innerHTML='';
+  if(!pages.length){el.innerHTML='<div class="hint">Nenhuma imagem adicionada ainda.</div>';return;}
+  pages.forEach((p,i)=>{const row=document.createElement('div');row.className='page-item';
+   const th=document.createElement('div');th.className='thumb';if(p.src){const im=document.createElement('img');im.src=p.src;th.append(im)}else th.textContent='Vazia';
+   const meta=document.createElement('div');meta.className='page-meta';const b=document.createElement('b');b.textContent=`${i+1}. ${p.name}`;const sm=document.createElement('small');sm.textContent=p.src?'Página ilustrada':'Página em branco';meta.append(b,sm);
+   const btns=document.createElement('div');btns.className='page-buttons';[['↑',()=>move(i,-1)],['↓',()=>move(i,1)],['×',()=>{pages.splice(i,1);render();}]].forEach(([t,fn])=>{const bt=document.createElement('button');bt.className='outline';bt.textContent=t;bt.onclick=fn;btns.append(bt)});
+   row.append(th,meta,btns);el.append(row);
+  });
+ }
+ function sheetSize(){const paper=$('paper').value,ori=$('orientation').value;let w=paper==='a3'?420:paper==='letter'?279:297,h=paper==='a3'?297:paper==='letter'?216:210;if(ori==='portrait')[w,h]=[h,w];return {w,h};}
+ function render(){
+  renderList();
+  const per=+$('perSheet').value, groups=[];
+  const coverEnabled=$('includeCover').checked, backEnabled=$('includeBack').checked;
+  const coverSheetNeeded=coverEnabled||backEnabled;
+  const interior=pages.map((p,i)=>({kind:`Página ${i+1}`,pageNumber:i+1,...p}));
+  // Capa e contracapa ocupam sempre a primeira folha, em posições fixas.
+  // As páginas internas começam em uma nova folha e nunca deslocam essa dupla.
+  if(coverSheetNeeded) groups.push([
+    coverEnabled&&cover ? {kind:'Capa',...cover} : {kind:'Capa',name:'Capa não enviada',src:null},
+    backEnabled&&back ? {kind:'Contracapa',...back} : {kind:'Contracapa',name:'Contracapa não enviada',src:null}
+  ]);
+  if(per===2){
+    for(let i=0;i<interior.length;i+=2) groups.push(interior.slice(i,i+2));
+  } else {
+    interior.forEach(p=>groups.push([p]));
+  }
+  const totalPages=interior.length+(coverEnabled?1:0)+(backEnabled?1:0);
+  const {w,h}=sheetSize();const preview=$('preview');preview.innerHTML='';
+  if(!totalPages){preview.innerHTML='<div class="empty-state"><div class="big">🖼️</div><b>Seu livro aparecerá aqui</b><br>Adicione imagens no painel lateral para montar as páginas.</div>';$('stats').textContent='Adicione imagens para começar.';return;}
+  $('stats').textContent=`${totalPages} páginas • ${groups.length} folhas • ${w} × ${h} mm • ${per} por folha nas páginas internas`;
+  groups.forEach((group,idx)=>{
+   const isCoverSheet=idx===0&&coverSheetNeeded;
+   const groupPerSheet=isCoverSheet?2:per;
+   const wrap=document.createElement('div');wrap.className='sheet-wrap';
+   const label=document.createElement('div');label.className='sheet-label';
+   label.innerHTML=`<span>FOLHA ${idx+1} DE ${groups.length}${isCoverSheet?' • CAPA + CONTRACAPA':''}</span><span>${w} × ${h} mm • ${group.length} página(s)</span>`;
+   const sheet=document.createElement('div');sheet.className='sheet'+(groupPerSheet===1?' single':'');
+   const margin=+$('margin').value,bw=$('showBorder').checked?+$('borderWidth').value:0;
+   const gutterMm=+$('gutter').value;
+   sheet.style.setProperty('--margin',`${margin/10}mm`);sheet.style.setProperty('--border-width',`${bw/10}mm`);sheet.style.setProperty('--border-color',$('borderColor').value);sheet.style.setProperty('--gutter',`${gutterMm}mm`);
+   group.forEach((p,j)=>{
+    const cell=document.createElement('div');cell.className='cell';cell.style.background=$('backgroundColor').value;
+    const inner=document.createElement('div');inner.className='cell-inner';inner.style.borderColor=$('borderColor').value;inner.style.borderWidth=`${bw/10}mm`;inner.style.background=$('backgroundColor').value;
+    if(p.src){const im=document.createElement('img');im.src=p.src;const selectedFit=isCoverSheet?$('coverFit').value:$('fit').value;if(selectedFit==='cover')im.className='cover';inner.append(im)}
+    else {const empty=document.createElement('div');empty.className='empty';empty.innerHTML=`<b>${p.kind}</b>${p.kind==='Capa'||p.kind==='Contracapa'?'Envie a arte desta parte do livro':'Espaço reservado para desenho'}`;inner.append(empty)}
+    if($('pageLabels').checked&&!isCoverSheet&&p.pageNumber){
+      const tag=document.createElement('div');tag.className='page-number '+$('numberShape').value;tag.textContent=String(p.pageNumber);
+      tag.style.backgroundColor=$('numberBg').value;tag.style.color=$('numberColor').value;tag.style.fontSize=`${$('numberSize').value}px`;inner.append(tag);
+    }
+    cell.append(inner);
+    if($('cropMarks').checked){['tl','tr','bl','br'].forEach(pos=>{const c=document.createElement('i');c.className='crop '+pos;cell.append(c)})}
+    sheet.append(cell);
+   });
+   if(groupPerSheet===2&&$('foldMark').checked){const fold=document.createElement('div');fold.className='fold';sheet.append(fold)}
+   wrap.append(label,sheet);preview.append(wrap);
+  });
+  document.documentElement.style.setProperty('--print-margin',`${margin/10}mm`);
+ }
+ settingsIds.forEach(id=>$(id).addEventListener('input',()=>{if(id==='margin')$('marginVal').textContent=$('margin').value+' mm';if(id==='gutter')$('gutterVal').textContent=$('gutter').value+' mm';if(id==='numberSize')$('numberSizeVal').textContent=$('numberSize').value+' px';if(id==='borderWidth')$('borderVal').textContent=String($('borderWidth').value).replace('.',',')+' mm';render();}));
+ $('refresh').onclick=render;
+ $('printBtn').onclick=()=>{render();window.print();};
+ $('saveProject').onclick=()=>{
+  const data={version:1,settings:Object.fromEntries(settingsIds.map(id=>[id,$(id).type==='checkbox'?$(id).checked:$(id).value])),pages,cover,back};
+  const blob=new Blob([JSON.stringify(data)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='meu-livro-projeto.json';a.click();URL.revokeObjectURL(url);
+ };
+ $('loadProject').onclick=()=>{const inp=document.createElement('input');inp.type='file';inp.accept='.json,application/json';inp.onchange=async()=>{const f=inp.files[0];if(!f)return;try{const d=JSON.parse(await f.text());pages=d.pages||[];cover=d.cover||null;back=d.back||null;nextId=Math.max(0,...pages.map(p=>p.id||0))+1;Object.entries(d.settings||{}).forEach(([id,v])=>{if($(id)){if($(id).type==='checkbox')$(id).checked=!!v;else $(id).value=v;}});$('marginVal').textContent=$('margin').value+' mm';$('gutterVal').textContent=$('gutter').value+' mm';$('numberSizeVal').textContent=$('numberSize').value+' px';$('borderVal').textContent=String($('borderWidth').value).replace('.',',')+' mm';render();}catch(e){alert('Não foi possível abrir este projeto. Verifique o arquivo.')}};inp.click();};
+ render();
+})();
+</script>
+</body>
+</html>
