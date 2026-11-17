@@ -147,8 +147,8 @@ input[type=range]{width:100%;accent-color:var(--brand)}input[type=checkbox]{acce
   // Capa e contracapa ocupam sempre a primeira folha, em posições fixas.
   // As páginas internas começam em uma nova folha e nunca deslocam essa dupla.
   if(coverSheetNeeded) groups.push([
-    coverEnabled&&cover ? {kind:'Capa',...cover} : {kind:'Capa',name:'Capa não enviada',src:null},
-    backEnabled&&back ? {kind:'Contracapa',...back} : {kind:'Contracapa',name:'Contracapa não enviada',src:null}
+    backEnabled&&back ? {kind:'Contracapa',...back} : {kind:'Contracapa',name:'Contracapa não enviada',src:null},
+    coverEnabled&&cover ? {kind:'Capa',...cover} : {kind:'Capa',name:'Capa não enviada',src:null}
   ]);
   if(per===2){
     for(let i=0;i<interior.length;i+=2) groups.push(interior.slice(i,i+2));
